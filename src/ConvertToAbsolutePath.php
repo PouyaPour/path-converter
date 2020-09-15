@@ -95,8 +95,8 @@ class ConvertToAbsolutePath implements ConverterInterface
         }
         // Convert paths like ../foo or ../../bar
         if($this->isPathStartWithTwoPointSlash($path)) {
-           $removeTwoPointSlash = new RemovePathWithPointPointSlash($this, $path);
-           return $removeTwoPointSlash->compute();
+            $removeTwoPointSlash = new RemovePathWithPointPointSlash($this, $path);
+            return $removeTwoPointSlash->compute();
         }
         if (empty($path)) {
             return $this->getPagePath();
@@ -111,7 +111,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         $parseUrl = parse_url($url);
         if ($this->isCorrectUrl($parseUrl)) {
             return '';
-        }elseif(isset($parseUrl['scheme'])){
+        } elseif(isset($parseUrl['scheme'])){
             return $parseUrl['scheme'] . '://' . $parseUrl['host'];
         } else {
             return $parseUrl['host'];
@@ -123,8 +123,9 @@ class ConvertToAbsolutePath implements ConverterInterface
     public function upToLastDir($url) {
         $parseUrl = parse_url($url);
         $path = '';
-        if(isset($parseUrl['path']))
-            $path = preg_replace('/\/([^\/]+)$/i', '', $parseUrl['path']);
+        if(isset($parseUrl['path'])) {
+                    $path = preg_replace('/\/([^\/]+)$/i', '', $parseUrl['path']);
+        }
         return rtrim($parseUrl['scheme'] . '://' . $parseUrl['host'] . $path, '/') . '/';
     }
 
@@ -164,9 +165,9 @@ class ConvertToAbsolutePath implements ConverterInterface
         if($this->starterPath===null){
             if($this->getBaseTag() === null) {
                 $this->starterPath =$this->getPagePath();
-            }elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
+            } elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
                 $this->starterPath = $this->getBaseTag() ;
-            }else{
+            } else{
                 $this->starterPath = $this->getPagePathParsing()['scheme'] . '://' . $this->getPagePathParsing()['host'] . $this->getBaseTag();
             }
         }
@@ -192,9 +193,9 @@ class ConvertToAbsolutePath implements ConverterInterface
         if ($this->scheme === null) {
             if($this->getBaseTag() === null) {
                 $this->scheme = $this->getPagePathParsing()['scheme'];
-            }elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
+            } elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
                 $this->scheme = $this->getBaseTagParsing()['scheme'];
-            }else{
+            } else{
                 $this->scheme = $this->getPagePathParsing()['scheme'];
             }
         }
@@ -203,15 +204,25 @@ class ConvertToAbsolutePath implements ConverterInterface
 
     public function getBaseTagParsing()
     {
-        if($this->baseTagParsing == null)
-            $this->baseTagParsing = parse_url($this->getBaseTag());
+        if($this->baseTagParsing == null) {
+            if(is_string($this->getBaseTag())) {
+                $this->baseTagParsing = parse_url($this->getBaseTag());
+            } else {
+                $this->baseTagParsing = [];
+            }
+        }
         return $this->baseTagParsing;
     }
 
     public function getPagePathParsing()
     {
-        if($this->pagePathParsing == null)
-            $this->pagePathParsing = parse_url($this->getPagePath());
+        if($this->pagePathParsing == null) {
+            if(is_string($this->getPagePath())) {
+                $this->pagePathParsing = parse_url($this->getPagePath());
+            }else{
+                $this->pagePathParsing = [];
+            }
+        }
         return $this->pagePathParsing;
     }
 
@@ -239,12 +250,15 @@ class ConvertToAbsolutePath implements ConverterInterface
      */
     public function checkPathIsAbsoluteOrForAnotherApp($path): string
     {
-        if (preg_match('/services:\/\//i', $path))
+        if (preg_match('/services:\/\//i', $path)) {
             return '';
-        if (preg_match('/whatsapp:\/\//i', $path))
+        }
+        if (preg_match('/whatsapp:\/\//i', $path)) {
             return '';
-        if (preg_match('/tel:/i', $path))
+        }
+        if (preg_match('/tel:/i', $path)) {
             return '';
+        }
         return $path;
     }
 

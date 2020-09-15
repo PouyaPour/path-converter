@@ -24,13 +24,13 @@ class RemovePathWithPointPointSlash
 
     public function compute()
     {
-        while(substr($this->getPath(), 0, 3) == '../') {
+        while (substr($this->getPath(), 0, 3) == '../') {
             $this->setStarterPath(preg_replace('/\/([^\/]+\/)$/i', '/', $this->getStarterPath()));
             $this->setPath(substr($this->getPath(), 3));
         }
         if ($this->getStarterPath() === ($this->getScheme() . '://')) {
             $this->setStarterPath($this->getStarterPath() . $this->getDomain());
-        } elseif ($this->getStarterPath() ===($this->getScheme(). ':/')) {
+        } elseif ($this->getStarterPath() === ($this->getScheme(). ':/')) {
             $this->setStarterPath($this->getStarterPath() . '/' . $this->getDomain());
         }
         return $this->getStarterPath() . $this->getPath();
