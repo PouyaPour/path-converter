@@ -1,0 +1,26 @@
+{
+    "name": "seosazi/path-converter",
+    "type": "library",
+    "description": "convert relative path to absolute path",
+    "keywords": ["url", "php", "path", "convert"],
+    "homepage": "https://github.com/seosazi",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pouya Pormohamad",
+            "email": "p.pormohamad@gmail.com",
+            "homepage": "https://github.com/seosazi"
+        }
+    ],
+    "require": {
+        "php": ">=7.2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "seosazi\\PathConverter\\": "src"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "9.2"
+    }
+}
