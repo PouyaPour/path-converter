@@ -69,17 +69,11 @@ class ConvertToAbsolutePath implements ConverterInterface
     public function convert($path)
     {
         // Skip converting if the relative url like http://... or android-app://... etc.
-        if (preg_match('/[a-z0-9-]{1,}(:\/\/)/i', $path)) {
-            if(preg_match('/services:\/\//i', $path))
-                        return '';
-            if(preg_match('/whatsapp:\/\//i', $path))
-                        return '';
-            if(preg_match('/tel:/i', $path))
-                        return '';
-            return $path;
+        if ($this->isPathAbsoluteOrForAnotherApp($path)) {
+            return $this->checkPathIsAbsoluteOrForAnotherApp($path);
         }
         // Treat path as invalid if it is like javascript:... etc.
-        if (preg_match('/^[a-zA-Z]{0,}:[^\/]{0,1}/i', $path)) {
+        if ($this->isPathJavaScript($path)) {
             return '';
         }
         // Convert //www.google.com to http://www.google.com
@@ -237,5 +231,38 @@ class ConvertToAbsolutePath implements ConverterInterface
     public function isCorrectUrl($parseUrl): bool
     {
         return !isset($parseUrl['scheme']) AND !isset($parseUrl['host']);
+    }
+
+    /**
+     * @param $path
+     * @return string
+     */
+    public function checkPathIsAbsoluteOrForAnotherApp($path): string
+    {
+        if (preg_match('/services:\/\//i', $path))
+            return '';
+        if (preg_match('/whatsapp:\/\//i', $path))
+            return '';
+        if (preg_match('/tel:/i', $path))
+            return '';
+        return $path;
+    }
+
+    /**
+     * @param $path
+     * @return false|int
+     */
+    public function isPathAbsoluteOrForAnotherApp($path)
+    {
+        return preg_match('/[a-z0-9-]{1,}(:\/\/)/i', $path);
+    }
+
+    /**
+     * @param $path
+     * @return false|int
+     */
+    public function isPathJavaScript($path)
+    {
+        return preg_match('/^[a-zA-Z]{0,}:[^\/]{0,1}/i', $path);
     }
 }
