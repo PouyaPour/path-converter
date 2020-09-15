@@ -58,7 +58,6 @@ class ConvertToAbsolutePathTest extends TestCase
      */
     public function testOnlySitePath($path, $result)
     {
-        $address = new ConvertToAbsolutePath('http://example.com/some/fake/path/');
         $this->assertSame($this->getAddress()->onlySitePath($path), $result);
     }
 

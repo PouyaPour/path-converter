@@ -71,11 +71,11 @@ class ConvertToAbsolutePath implements ConverterInterface
         // Skip converting if the relative url like http://... or android-app://... etc.
         if (preg_match('/[a-z0-9-]{1,}(:\/\/)/i', $path)) {
             if(preg_match('/services:\/\//i', $path))
-                return '';
+                        return '';
             if(preg_match('/whatsapp:\/\//i', $path))
-                return '';
+                        return '';
             if(preg_match('/tel:/i', $path))
-                return '';
+                        return '';
             return $path;
         }
         // Treat path as invalid if it is like javascript:... etc.
@@ -88,7 +88,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         }
         // If the path is a fragment or query string,
         // it will be appended to the base url
-        if(substr($path, 0, 1) == '#' || substr($path, 0, 1) == '?') {
+        if($this->isHaveQueryOrFragment($path)) {
             return $this->getStarterPath() . $path;
         }
         // Treat paths with doc root, i.e, /about
@@ -101,18 +101,8 @@ class ConvertToAbsolutePath implements ConverterInterface
         }
         // Convert paths like ../foo or ../../bar
         if(substr($path, 0, 3) == '../') {
-            $rel = $path;
-            $base = $this->uptoLastDir($this->getStarterPath());
-            while(substr($rel, 0, 3) == '../') {
-                $base = preg_replace('/\/([^\/]+\/)$/i', '/', $base);
-                $rel = substr($rel, 3);
-            }
-            if ($base === ($this->getScheme() . '://')) {
-                $base .= $this->getDomain();
-            } elseif ($base===($this->getScheme(). ':/')) {
-                $base .= '/' . $this->getDomain();
-            }
-            return $base . $rel;
+           $removeTwoPointSlash = new RemovePathWithPointPointSlash($this, $path);
+           return $removeTwoPointSlash->compute();
         }
         if (empty($path)) {
             return $this->getPagePath();
@@ -125,7 +115,7 @@ class ConvertToAbsolutePath implements ConverterInterface
 //        $url = preg_replace('/(^https?:\/\/.+?\/)(.*)$/i', '$1', $url);
 //        return rtrim($url, '/');
         $parseUrl = parse_url($url);
-        if (!isset($parseUrl['scheme']) AND !isset($parseUrl['host'])) {
+        if ($this->isCorrectUrl($parseUrl)) {
             return '';
         }elseif(isset($parseUrl['scheme'])){
             return $parseUrl['scheme'] . '://' . $parseUrl['host'];
@@ -175,7 +165,7 @@ class ConvertToAbsolutePath implements ConverterInterface
     /**
      * @return string
      */
-    private function getStarterPath(): string
+    public function getStarterPath(): string
     {
         if($this->starterPath===null){
             if($this->getBaseTag() === null) {
@@ -189,7 +179,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         return $this->starterPath;
     }
 
-    private function getDomain()
+    public function getDomain()
     {
         if ($this->domain === null) {
             if($this->getBaseTag() === null) {
@@ -203,7 +193,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         return $this->domain;
     }
 
-    private function getScheme()
+    public function getScheme()
     {
         if ($this->scheme === null) {
             if($this->getBaseTag() === null) {
@@ -217,17 +207,35 @@ class ConvertToAbsolutePath implements ConverterInterface
         return $this->scheme;
     }
 
-    private function getBaseTagParsing()
+    public function getBaseTagParsing()
     {
         if($this->baseTagParsing == null)
             $this->baseTagParsing = parse_url($this->getBaseTag());
         return $this->baseTagParsing;
     }
 
-    private function getPagePathParsing()
+    public function getPagePathParsing()
     {
         if($this->pagePathParsing == null)
             $this->pagePathParsing = parse_url($this->getPagePath());
         return $this->pagePathParsing;
+    }
+
+    /**
+     * @param $path
+     * @return bool
+     */
+    public function isHaveQueryOrFragment($path): bool
+    {
+        return substr($path, 0, 1) == '#' || substr($path, 0, 1) == '?';
+    }
+
+    /**
+     * @param $parseUrl
+     * @return bool
+     */
+    public function isCorrectUrl($parseUrl): bool
+    {
+        return !isset($parseUrl['scheme']) AND !isset($parseUrl['host']);
     }
 }
