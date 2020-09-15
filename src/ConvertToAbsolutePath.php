@@ -37,7 +37,7 @@ class ConvertToAbsolutePath implements ConverterInterface
     /** @var string|null */
     private $baseTag = null;
     /** @var string|null  */
-    private $starterPath=null;
+    private $starterPath = null;
     /**
      * @var array|false|int|string|null
      */
@@ -56,9 +56,9 @@ class ConvertToAbsolutePath implements ConverterInterface
      * ConvertToAbsolutePath constructor.
      * @param $pagePath
      */
-    public function __construct($pagePath=NULL)
+    public function __construct($pagePath = NULL)
     {
-        if(isset($pagePath)) {
+        if (isset($pagePath)) {
             $this->setPagePath($pagePath);
         }
     }
@@ -77,24 +77,24 @@ class ConvertToAbsolutePath implements ConverterInterface
             return '';
         }
         // Convert //www.google.com to http://www.google.com
-        if($this->isPathWithoutScheme($path)) {
+        if ($this->isPathWithoutScheme($path)) {
             return 'http:' . $path;
         }
         // If the path is a fragment or query string,
         // it will be appended to the base url
-        if($this->isHaveQueryOrFragment($path)) {
+        if ($this->isHaveQueryOrFragment($path)) {
             return $this->getStarterPath() . $path;
         }
         // Treat paths with doc root, i.e, /about
-        if($this->isPathStartWithSlash($path)) {
+        if ($this->isPathStartWithSlash($path)) {
             return $this->onlySitePath($this->getStarterPath()) . $path;
         }
         // For paths like ./foo, it will be appended to the furthest directory
-        if($this->isPathStartWithPointSlash($path)) {
+        if ($this->isPathStartWithPointSlash($path)) {
             return $this->uptoLastDir($this->getStarterPath()) . substr($path, 2);
         }
         // Convert paths like ../foo or ../../bar
-        if($this->isPathStartWithTwoPointSlash($path)) {
+        if ($this->isPathStartWithTwoPointSlash($path)) {
             $removeTwoPointSlash = new RemovePathWithPointPointSlash($this, $path);
             return $removeTwoPointSlash->compute();
         }
@@ -111,7 +111,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         $parseUrl = parse_url($url);
         if ($this->isCorrectUrl($parseUrl)) {
             return '';
-        } elseif(isset($parseUrl['scheme'])){
+        } elseif(isset($parseUrl['scheme'])) {
             return $parseUrl['scheme'] . '://' . $parseUrl['host'];
         } else {
             return $parseUrl['host'];
@@ -162,12 +162,12 @@ class ConvertToAbsolutePath implements ConverterInterface
      */
     public function getStarterPath(): string
     {
-        if($this->starterPath===null){
-            if($this->getBaseTag() === null) {
+        if ($this->starterPath===null) {
+            if ($this->getBaseTag() === null) {
                 $this->starterPath =$this->getPagePath();
-            } elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
+            } elseif (array_key_exists('scheme', $this->getBaseTagParsing())) {
                 $this->starterPath = $this->getBaseTag() ;
-            } else{
+            } else {
                 $this->starterPath = $this->getPagePathParsing()['scheme'] . '://' . $this->getPagePathParsing()['host'] . $this->getBaseTag();
             }
         }
@@ -177,11 +177,11 @@ class ConvertToAbsolutePath implements ConverterInterface
     public function getDomain()
     {
         if ($this->domain === null) {
-            if($this->getBaseTag() === null) {
+            if ($this->getBaseTag() === null) {
                 $this->domain = $this->getPagePathParsing()['host'] . '/';
-            }elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
+            }elseif (array_key_exists('scheme', $this->getBaseTagParsing())){
                 $this->domain = $this->getBaseTagParsing()['host'] . '/';
-            }else{
+            }else {
                 $this->domain = $this->getPagePathParsing()['host'] . '/';
             }
         }
@@ -191,11 +191,11 @@ class ConvertToAbsolutePath implements ConverterInterface
     public function getScheme()
     {
         if ($this->scheme === null) {
-            if($this->getBaseTag() === null) {
+            if ($this->getBaseTag() === null) {
                 $this->scheme = $this->getPagePathParsing()['scheme'];
-            } elseif(array_key_exists('scheme', $this->getBaseTagParsing())){
+            }elseif (array_key_exists('scheme', $this->getBaseTagParsing())){
                 $this->scheme = $this->getBaseTagParsing()['scheme'];
-            } else{
+            }else {
                 $this->scheme = $this->getPagePathParsing()['scheme'];
             }
         }
@@ -204,8 +204,8 @@ class ConvertToAbsolutePath implements ConverterInterface
 
     public function getBaseTagParsing()
     {
-        if($this->baseTagParsing == null) {
-            if(is_string($this->getBaseTag())) {
+        if ($this->baseTagParsing == null) {
+            if (is_string($this->getBaseTag())) {
                 $this->baseTagParsing = parse_url($this->getBaseTag());
             } else {
                 $this->baseTagParsing = [];
@@ -216,12 +216,8 @@ class ConvertToAbsolutePath implements ConverterInterface
 
     public function getPagePathParsing()
     {
-        if($this->pagePathParsing == null) {
-            if(is_string($this->getPagePath())) {
-                $this->pagePathParsing = parse_url($this->getPagePath());
-            }else{
-                $this->pagePathParsing = [];
-            }
+        if ($this->pagePathParsing == null) {
+            $this->pagePathParsing = parse_url($this->getPagePath());
         }
         return $this->pagePathParsing;
     }
