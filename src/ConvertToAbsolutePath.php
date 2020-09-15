@@ -118,9 +118,11 @@ class ConvertToAbsolutePath implements ConverterInterface
     // Get the path with last directory
     // http://example.com/some/fake/path/page.html => http://example.com/some/fake/path/
     public function upToLastDir($url) {
-//        $url = preg_replace('/\/([^\/]+\.[^\/]+)$/i', '', $url);
-        $url = preg_replace('/\/([^\/]+)$/i', '', $url);
-        return rtrim($url, '/') . '/';
+        $parseUrl = parse_url($url);
+        $path = '';
+        if(isset($parseUrl['path']))
+            $path = preg_replace('/\/([^\/]+)$/i', '', $parseUrl['path']);
+        return rtrim($parseUrl['scheme'] . '://' . $parseUrl['host'] . $path, '/') . '/';
     }
 
     /**
