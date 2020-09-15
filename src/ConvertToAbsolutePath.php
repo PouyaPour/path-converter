@@ -34,8 +34,8 @@ class ConvertToAbsolutePath implements ConverterInterface
 
     /** @var string */
     private $pagePath;
-    /** @var string */
-    private $baseTag;
+    /** @var string|null */
+    private $baseTag = null;
     /** @var string|null  */
     private $starterPath=null;
     /**
@@ -53,6 +53,17 @@ class ConvertToAbsolutePath implements ConverterInterface
     private $scheme;
 
     /**
+     * ConvertToAbsolutePath constructor.
+     * @param $pagePath
+     */
+    public function __construct($pagePath=NULL)
+    {
+        if(isset($pagePath)) {
+            $this->setPagePath($pagePath);
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function convert($path)
@@ -60,16 +71,16 @@ class ConvertToAbsolutePath implements ConverterInterface
         // Skip converting if the relative url like http://... or android-app://... etc.
         if (preg_match('/[a-z0-9-]{1,}(:\/\/)/i', $path)) {
             if(preg_match('/services:\/\//i', $path))
-                return null;
+                return '';
             if(preg_match('/whatsapp:\/\//i', $path))
-                return null;
+                return '';
             if(preg_match('/tel:/i', $path))
-                return null;
+                return '';
             return $path;
         }
         // Treat path as invalid if it is like javascript:... etc.
         if (preg_match('/^[a-zA-Z]{0,}:[^\/]{0,1}/i', $path)) {
-            return NULL;
+            return '';
         }
         // Convert //www.google.com to http://www.google.com
         if(substr($path, 0, 2) == '//') {
@@ -82,16 +93,16 @@ class ConvertToAbsolutePath implements ConverterInterface
         }
         // Treat paths with doc root, i.e, /about
         if(substr($path, 0, 1) == '/') {
-            return static::onlySitePath($this->getStarterPath()) . $path;
+            return $this->onlySitePath($this->getStarterPath()) . $path;
         }
         // For paths like ./foo, it will be appended to the furthest directory
         if(substr($path, 0, 2) == './') {
-            return static::uptoLastDir($this->getStarterPath()) . substr($path, 2);
+            return $this->uptoLastDir($this->getStarterPath()) . substr($path, 2);
         }
         // Convert paths like ../foo or ../../bar
         if(substr($path, 0, 3) == '../') {
             $rel = $path;
-            $base = static::uptoLastDir($this->getStarterPath());
+            $base = $this->uptoLastDir($this->getStarterPath());
             while(substr($rel, 0, 3) == '../') {
                 $base = preg_replace('/\/([^\/]+\/)$/i', '/', $base);
                 $rel = substr($rel, 3);
@@ -107,12 +118,20 @@ class ConvertToAbsolutePath implements ConverterInterface
             return $this->getPagePath();
         }
         // else
-        return static::uptoLastDir($this->getStarterPath()) . $path;
+        return $this->uptoLastDir($this->getStarterPath()) . $path;
     }
 
-    private function onlySitePath($url) {
-        $url = preg_replace('/(^https?:\/\/.+?\/)(.*)$/i', '$1', $url);
-        return rtrim($url, '/');
+    public function onlySitePath($url) {
+//        $url = preg_replace('/(^https?:\/\/.+?\/)(.*)$/i', '$1', $url);
+//        return rtrim($url, '/');
+        $parseUrl = parse_url($url);
+        if (!isset($parseUrl['scheme']) AND !isset($parseUrl['host'])) {
+            return '';
+        }elseif(isset($parseUrl['scheme'])){
+            return $parseUrl['scheme'] . '://' . $parseUrl['host'];
+        } else {
+            return $parseUrl['host'];
+        }
     }
 
     // Get the path with last directory
@@ -125,10 +144,8 @@ class ConvertToAbsolutePath implements ConverterInterface
         return rtrim($parseUrl['scheme'] . '://' . $parseUrl['host'] . $path, '/') . '/';
     }
 
-    /**
-     * @return string
-     */
-    public function getPagePath(): string
+
+    public function getPagePath()
     {
         return $this->pagePath;
     }
@@ -141,10 +158,8 @@ class ConvertToAbsolutePath implements ConverterInterface
         $this->pagePath = $pagePath;
     }
 
-    /**
-     * @return string
-     */
-    public function getBaseTag(): string
+
+    public function getBaseTag()
     {
         return $this->baseTag;
     }
