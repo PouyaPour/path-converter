@@ -77,7 +77,7 @@ class ConvertToAbsolutePath implements ConverterInterface
             return '';
         }
         // Convert //www.google.com to http://www.google.com
-        if(substr($path, 0, 2) == '//') {
+        if($this->isPathWithoutScheme($path)) {
             return 'http:' . $path;
         }
         // If the path is a fragment or query string,
@@ -86,15 +86,15 @@ class ConvertToAbsolutePath implements ConverterInterface
             return $this->getStarterPath() . $path;
         }
         // Treat paths with doc root, i.e, /about
-        if(substr($path, 0, 1) == '/') {
+        if($this->isPathStartWithSlash($path)) {
             return $this->onlySitePath($this->getStarterPath()) . $path;
         }
         // For paths like ./foo, it will be appended to the furthest directory
-        if(substr($path, 0, 2) == './') {
+        if($this->isPathStartWithPointSlash($path)) {
             return $this->uptoLastDir($this->getStarterPath()) . substr($path, 2);
         }
         // Convert paths like ../foo or ../../bar
-        if(substr($path, 0, 3) == '../') {
+        if($this->isPathStartWithTwoPointSlash($path)) {
            $removeTwoPointSlash = new RemovePathWithPointPointSlash($this, $path);
            return $removeTwoPointSlash->compute();
         }
@@ -264,5 +264,41 @@ class ConvertToAbsolutePath implements ConverterInterface
     public function isPathJavaScript($path)
     {
         return preg_match('/^[a-zA-Z]{0,}:[^\/]{0,1}/i', $path);
+    }
+
+    /**
+     * @param $path
+     * @return bool
+     */
+    public function isPathWithoutScheme($path): bool
+    {
+        return substr($path, 0, 2) == '//';
+    }
+
+    /**
+     * @param $path
+     * @return bool
+     */
+    public function isPathStartWithSlash($path): bool
+    {
+        return substr($path, 0, 1) == '/';
+    }
+
+    /**
+     * @param $path
+     * @return bool
+     */
+    public function isPathStartWithPointSlash($path): bool
+    {
+        return substr($path, 0, 2) == './';
+    }
+
+    /**
+     * @param $path
+     * @return bool
+     */
+    public function isPathStartWithTwoPointSlash($path): bool
+    {
+        return substr($path, 0, 3) == '../';
     }
 }
