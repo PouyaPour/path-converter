@@ -89,7 +89,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         if ($this->isPathWithoutScheme($path)) {
             return 'http:' . $path;
         }
-        
+
         // If the path is a fragment or query string,
         // it will be appended to the base url
         if ($this->isHaveQueryOrFragment($path)) {
