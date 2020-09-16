@@ -2,8 +2,8 @@
     "name": "seosazi/path-converter",
     "type": "library",
     "description": "convert relative path to absolute path",
-    "keywords": ["url", "php", "path", "convert"],
-    "homepage": "https://github.com/seosazi",
+    "keywords": ["url", "php", "path", "convert", "relative"],
+    "homepage": "https://github.com/seosazi/path-converter",
     "license": "MIT",
     "authors": [
         {

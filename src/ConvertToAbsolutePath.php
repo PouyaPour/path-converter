@@ -32,11 +32,17 @@ namespace seosazi\PathConverter;
 class ConvertToAbsolutePath implements ConverterInterface
 {
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $pagePath;
-    /** @var string|null */
+    /**
+     * @var string|null
+     */
     private $baseTag = null;
-    /** @var string|null  */
+    /**
+     * @var string|null
+     */
     private $starterPath = null;
     /**
      * @var array|false|int|string|null
@@ -50,6 +56,9 @@ class ConvertToAbsolutePath implements ConverterInterface
      * @var string
      */
     private $domain;
+    /**
+     * @var string
+     */
     private $scheme;
 
     /**
@@ -80,6 +89,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         if ($this->isPathWithoutScheme($path)) {
             return 'http:' . $path;
         }
+        
         // If the path is a fragment or query string,
         // it will be appended to the base url
         if ($this->isHaveQueryOrFragment($path)) {
