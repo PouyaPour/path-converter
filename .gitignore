@@ -47,6 +47,6 @@ composer.phar
 # Project
 phpunit.phar
 .phpunit.result.cache
-phpunit.xml.dist
+phpunit.xml
 /build/
 .env
