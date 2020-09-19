@@ -1,51 +1,16 @@
-#language: php
-#
-#php:
-#  - 7.3
-#
-#before_script:
-#  - pip install codecov
-#  - composer self-update
-#  - composer install --no-interaction
-#
-#script:
-#  - vendor/bin/phpunit --coverage-xml coverage.xml
-#
-#after_success:
-#  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
-#  - codecov
-#  - # Config file for https://travis-ci.org/
+language: php
 
-    language: php
+php:
+  - 7.3
 
-    # Define the php versions against we want to test our code
-    php:
-      - 7.3
+before_script:
+  - pip install codecov
+  - composer self-update
+  - composer install --no-interaction
 
-    # Note: Code coverage requires php-xDebug extension enabled on CI server
+script:
+  - vendor/bin/phpunit --coverage-xml coverage.xml
 
-    install:
-      - travis_retry composer install --no-interaction --no-suggest
-
-    # Testing the app (see phpunit.xml) for configs, generating Code Coverage report
-    script:
-      - composer test -- --coverage-clover=coverage.xml
-
-    #after_script:
-
-    after_success:
-      # Submit coverage report to https://codecov.io
-      - bash <(curl -s https://codecov.io/bash)
-
-    #after_failure:
-
-    # Monitor only these branches
-    branches:
-      only:
-        - master
-        - dev
-
-    # You can delete the cache using travis-ci web interface
-    cache:
-      directories:
-        - $HOME/.composer/cache
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  - codecov
