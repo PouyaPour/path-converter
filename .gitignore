@@ -1,22 +1,52 @@
-/vendor/
+# http://git-scm.com/docs/gitignore
+
+# sublime and other ide
 .idea/
-thumbnails/
-/Temp/
-/todo
-index.php
-# OS generated files #
-######################
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-files/
-sitemaps/
-*.mwb.bak
+.project
+*.sublime-*
+.brackets.json
+.vscode
+
+# logs and cache
+/logs/
+*.log
+npm-debug.log*
 .sass-cache
-.sass-cache/*
+.cache
+.php_cs.cache
+
+# OS generated files
+[Tt]humbs.db
+ehthumbs.db
+*~
+.*~
+._*
+*.bak
+*.save
+*.swp
+
+# Recycle bin folder used by different os
+.Trash-*
+$RECYCLE.BIN/
+
+# Windows shortcuts
+*.lnk
+
+# Folder config file
+[Dd]esktop.ini
+*.DS_Store
+.DS_Store?
+
+# node packages
 node_modules/
-dev/*.log
+
+# composer
+/vendor/
+composer.phar
+
+# Project
+phpunit.phar
+.phpunit.result.cache
+phpunit.xml.dist
+/build/
+.env
