@@ -19,6 +19,11 @@ class ConvertToAbsolutePathTest extends TestCase
         );
     }
 
+    public function testConstruct()
+    {
+        $this->expectException(new ConvertToAbsolutePath('/some/fake/path/page.html'));
+    }
+
     /**
      * @dataProvider dataForTestUpToLastDir
      * @param $path
@@ -144,6 +149,42 @@ class ConvertToAbsolutePathTest extends TestCase
                 'bastam/resources/images',
                 'browserSupport/war_icon.png',
                 'https://bastam.bankmellat.ir/bastam/resources/images/browserSupport/war_icon.png'
+            ],
+            'javascript' => [
+                'https://bastam.bankmellat.ir/bastam/shahab_service',
+                null,
+                'javascript:void(0)',
+                ''
+            ],
+            'WithoutScheme' => [
+                'https://bastam.bankmellat.ir/bastam/shahab_service',
+                null,
+                '//bastam.bankmellat.ir/bastam/resources/images/browserSupport/war_icon.png',
+                'http://bastam.bankmellat.ir/bastam/resources/images/browserSupport/war_icon.png'
+            ],
+            'QueryOrFragment' => [
+                'https://bastam.bankmellat.ir/bastam/shahab_service',
+                null,
+                '?ex=151.0_5',
+                'https://bastam.bankmellat.ir/bastam/shahab_service?ex=151.0_5'
+            ],
+            'WithPointSlash' => [
+                'https://bastam.bankmellat.ir/bastam/shahab_service',
+                null,
+                './browserSupport/war_icon.png',
+                'https://bastam.bankmellat.ir/bastam/browserSupport/war_icon.png'
+            ],
+            'with ../' => [
+                'https://www.jquery-az.com/html/test/demo.php?ex=151.0_5',
+                null,
+                '../../banana.jpg',
+                'https://www.jquery-az.com/banana.jpg'
+            ],
+            'empty path ' => [
+                'https://www.jquery-az.com/html/test/demo.php',
+                null,
+                '',
+                'https://www.jquery-az.com/html/test/demo.php',
             ]
         ];
     }

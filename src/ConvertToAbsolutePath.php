@@ -71,7 +71,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         if ($this->isCorrectUrl(parse_url($pagePath))) {
             $this->setPagePath($pagePath);
         }else{
-            throw new \Exception('$pagePath is not correct url');
+            throw new \Exception('path is not correct url');
         }
     }
 
