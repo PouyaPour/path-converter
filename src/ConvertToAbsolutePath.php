@@ -64,11 +64,14 @@ class ConvertToAbsolutePath implements ConverterInterface
     /**
      * ConvertToAbsolutePath constructor.
      * @param $pagePath
+     * @throws \Exception
      */
-    public function __construct($pagePath = NULL)
+    public function __construct($pagePath)
     {
-        if (isset($pagePath)) {
+        if ($this->isCorrectUrl(parse_url($pagePath))) {
             $this->setPagePath($pagePath);
+        }else{
+            throw new \Exception('$pagePath is not correct url');
         }
     }
 
@@ -105,8 +108,7 @@ class ConvertToAbsolutePath implements ConverterInterface
         }
         // Convert paths like ../foo or ../../bar
         if ($this->isPathStartWithTwoPointSlash($path)) {
-            $removeTwoPointSlash = new RemovePathWithPointPointSlash($this, $path);
-            return $removeTwoPointSlash->compute();
+            return (new RemovePathWithPointPointSlash($this, $path))->compute();
         }
         if (empty($path)) {
             return $this->getPagePath();
@@ -116,15 +118,13 @@ class ConvertToAbsolutePath implements ConverterInterface
     }
 
     public function onlySitePath($url) {
-//        $url = preg_replace('/(^https?:\/\/.+?\/)(.*)$/i', '$1', $url);
-//        return rtrim($url, '/');
         $parseUrl = parse_url($url);
         if ($this->isCorrectUrl($parseUrl)) {
-            return '';
-        } elseif(isset($parseUrl['scheme'])) {
             return $parseUrl['scheme'] . '://' . $parseUrl['host'];
-        } else {
+        } elseif(isset($parseUrl['host'])) {
             return $parseUrl['host'];
+        } else {
+            return '';
         }
     }
 
@@ -178,7 +178,8 @@ class ConvertToAbsolutePath implements ConverterInterface
             } elseif (array_key_exists('scheme', $this->getBaseTagParsing())) {
                 $this->starterPath = $this->getBaseTag() ;
             } else {
-                $this->starterPath = $this->getPagePathParsing()['scheme'] . '://' . $this->getPagePathParsing()['host'] . $this->getBaseTag();
+                $this->starterPath = $this->getPagePathParsing()['scheme'] . '://' . $this->getPagePathParsing()['host'] .
+                    '/' . trim($this->getBaseTag(), '/') . '/';
             }
         }
         return $this->starterPath;
@@ -247,7 +248,7 @@ class ConvertToAbsolutePath implements ConverterInterface
      */
     public function isCorrectUrl($parseUrl): bool
     {
-        return !isset($parseUrl['scheme']) AND !isset($parseUrl['host']);
+        return isset($parseUrl['scheme']) AND isset($parseUrl['host']);
     }
 
     /**
