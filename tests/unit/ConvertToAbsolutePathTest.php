@@ -19,10 +19,10 @@ class ConvertToAbsolutePathTest extends TestCase
         );
     }
 
-    public function testConstruct()
-    {
-        $this->expectException(new ConvertToAbsolutePath('/some/fake/path/page.html'));
-    }
+//    public function testConstruct()
+//    {
+//        $this->expectException(new ConvertToAbsolutePath('/some/fake/path/page.html'));
+//    }
 
     /**
      * @dataProvider dataForTestUpToLastDir
