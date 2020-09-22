@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1600637491">
-  <project timestamp="1600637491">
+<coverage generated="1600757606">
+  <project timestamp="1600757606">
     <package name="seosazi\PathConverter">
       <file name="C:\wamp641\www\path-converter\src\ConvertToAbsolutePath.php">
         <class name="seosazi\PathConverter\ConvertToAbsolutePath" namespace="seosazi\PathConverter">

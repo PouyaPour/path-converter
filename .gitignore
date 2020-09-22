@@ -1,5 +1,5 @@
 # http://git-scm.com/docs/gitignore
-
+index.php
 # sublime and other ide
 .idea/
 .project
